@@ -6,15 +6,17 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
 # ---------------------------------------------------------------------------
-# FFmpeg binary resolution (handles WinGet installs where PATH isn't updated)
+# FFmpeg binary resolution (cross-platform: Windows dev + Linux/Render prod)
 # ---------------------------------------------------------------------------
 _WINGET_BIN = Path.home() / "AppData/Local/Microsoft/WinGet/Packages"
 
 
 def _find_bin(name: str) -> str:
+    # 1. Check PATH first (works on Linux/Render where ffmpeg is installed via apt)
     found = shutil.which(name)
     if found:
         return found
+    # 2. Fallback: WinGet install location (Windows dev machines only)
     for candidate in _WINGET_BIN.rglob(f"{name}.exe"):
         return str(candidate)
     raise FileNotFoundError(
@@ -36,6 +38,14 @@ TRANSITION_DURATION = 0.5
 FRAMES_PER_IMAGE = FPS * SECONDS_PER_IMAGE  # 90 frames
 
 _FONT_CANDIDATES = [
+    # Linux / Render (Debian/Ubuntu)
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+    "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+    "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+    "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
+    "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
+    # Windows (local dev)
     r"C:\Windows\Fonts\arialbd.ttf",
     r"C:\Windows\Fonts\arial.ttf",
     r"C:\Windows\Fonts\calibrib.ttf",

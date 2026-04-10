@@ -38,6 +38,11 @@ MAX_IMAGE_SIZE_MB = 15
 MAX_AUDIO_SIZE_MB = 30
 
 
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
+
 @app.get("/api/status")
 def status():
     return {"ai_available": is_ai_available()}
