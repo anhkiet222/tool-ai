@@ -2,6 +2,11 @@ const API_BASE =
   (import.meta.env.VITE_API_BASE as string | undefined) ??
   "http://localhost:8000/api";
 
+// Bypass ngrok browser warning page when using ngrok tunnel
+const EXTRA_HEADERS: Record<string, string> = API_BASE.includes("ngrok")
+  ? { "ngrok-skip-browser-warning": "true" }
+  : {};
+
 export interface StatusResponse {
   ai_available: boolean;
 }
@@ -12,7 +17,7 @@ export interface CaptionResponse {
 }
 
 export async function fetchStatus(): Promise<StatusResponse> {
-  const res = await fetch(`${API_BASE}/status`);
+  const res = await fetch(`${API_BASE}/status`, { headers: EXTRA_HEADERS });
   if (!res.ok) throw new Error("Cannot reach backend");
   return res.json();
 }
@@ -21,9 +26,9 @@ export async function generateCaptions(
   description: string,
 ): Promise<CaptionResponse> {
   const form = new FormData();
-  form.append("description", description);
-  const res = await fetch(`${API_BASE}/generate-captions`, {
+  form.append("description", description);  const res = await fetch(`${API_BASE}/generate-captions`, {
     method: "POST",
+    headers: EXTRA_HEADERS,
     body: form,
   });
   if (!res.ok) {
@@ -44,9 +49,9 @@ export async function generateVideo(payload: {
   form.append("product_name", payload.productName);
   payload.bullets.forEach((b) => form.append("bullets", b));
   if (payload.music) form.append("music", payload.music);
-
   const res = await fetch(`${API_BASE}/generate`, {
     method: "POST",
+    headers: EXTRA_HEADERS,
     body: form,
   });
   if (!res.ok) {
