@@ -1,0 +1,164 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.field label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #ccc;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.field input {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: white;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.field input:focus {
+  border-color: #e535ab;
+}
+
+.hint {
+  font-weight: 400;
+  color: #555;
+  font-size: 0.78rem;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.bullets {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.bulletRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.bulletIndex {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #e535ab22;
+  color: #e535ab;
+  font-size: 0.75rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.bulletRow input {
+  flex: 1;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: white;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.bulletRow input:focus {
+  border-color: #e535ab;
+}
+.removeBullet {
+  background: none;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 4px;
+  border-radius: 4px;
+  transition: color 0.2s;
+}
+.removeBullet:hover {
+  color: #ff6b6b;
+}
+.addBullet {
+  align-self: flex-start;
+  background: none;
+  border: 1px dashed #444;
+  color: #777;
+  border-radius: 8px;
+  padding: 6px 14px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
+}
+.addBullet:hover {
+  border-color: #e535ab;
+  color: #e535ab;
+}
+
+.aiSection {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-top: 1px solid #222;
+  padding-top: 16px;
+}
+.aiSection label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #ccc;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.aiSection textarea {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: white;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  resize: vertical;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+.aiSection textarea:focus {
+  border-color: #e535ab;
+}
+.aiRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.charCount {
+  font-size: 0.78rem;
+  color: #555;
+}
+.aiButton {
+  background: linear-gradient(135deg, #e535ab, #9b27af);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.aiButton:hover:not(:disabled) {
+  opacity: 0.85;
+}
+.aiButton:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
