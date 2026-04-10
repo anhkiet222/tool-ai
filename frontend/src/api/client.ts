@@ -23,10 +23,11 @@ export async function fetchStatus(): Promise<StatusResponse> {
 }
 
 export async function generateCaptions(
-  description: string,
+  description: string
 ): Promise<CaptionResponse> {
   const form = new FormData();
-  form.append("description", description);  const res = await fetch(`${API_BASE}/generate-captions`, {
+  form.append("description", description);
+  const res = await fetch(`${API_BASE}/generate-captions`, {
     method: "POST",
     headers: EXTRA_HEADERS,
     body: form,

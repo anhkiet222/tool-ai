@@ -21,9 +21,20 @@ def _find_bin(name: str) -> str:
     found = shutil.which(name)
     if found:
         return found
-    # 2. Fallback: WinGet install location (Windows dev machines only)
-    for candidate in _WINGET_BIN.rglob(f"{name}.exe"):
-        return str(candidate)
+    # 2. Scan entire WinGet Packages directory recursively (covers ngrok, ffmpeg, etc.)
+    winget_root = Path.home() / "AppData/Local/Microsoft/WinGet/Packages"
+    if winget_root.exists():
+        for candidate in sorted(winget_root.rglob(f"{name}.exe")):
+            return str(candidate)
+    # 3. Common absolute fallback paths for Windows
+    fallbacks = [
+        Path.home() / f"AppData/Local/Microsoft/WinGet/Packages/Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe/ffmpeg-8.1-full_build/bin/{name}.exe",
+        Path(r"C:/ffmpeg/bin") / f"{name}.exe",
+        Path(r"C:/Program Files/ffmpeg/bin") / f"{name}.exe",
+    ]
+    for path in fallbacks:
+        if path.exists():
+            return str(path)
     raise FileNotFoundError(
         f"'{name}' not found. Install FFmpeg and ensure it is on your PATH."
     )
