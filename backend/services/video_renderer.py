@@ -7,8 +7,13 @@ from PIL import Image, ImageDraw, ImageFont
 
 # ---------------------------------------------------------------------------
 # FFmpeg binary resolution (cross-platform: Windows dev + Linux/Render prod)
+# Lazy init: resolved on first use, not at import time, so the app starts
+# cleanly even if FFmpeg is not yet on PATH during module load.
 # ---------------------------------------------------------------------------
 _WINGET_BIN = Path.home() / "AppData/Local/Microsoft/WinGet/Packages"
+
+_FFMPEG: str | None = None
+_FFPROBE: str | None = None
 
 
 def _find_bin(name: str) -> str:
@@ -24,8 +29,18 @@ def _find_bin(name: str) -> str:
     )
 
 
-_FFMPEG = _find_bin("ffmpeg")
-_FFPROBE = _find_bin("ffprobe")
+def _get_ffmpeg() -> str:
+    global _FFMPEG
+    if _FFMPEG is None:
+        _FFMPEG = _find_bin("ffmpeg")
+    return _FFMPEG
+
+
+def _get_ffprobe() -> str:
+    global _FFPROBE
+    if _FFPROBE is None:
+        _FFPROBE = _find_bin("ffprobe")
+    return _FFPROBE
 
 # ---------------------------------------------------------------------------
 # Video constants
@@ -180,12 +195,11 @@ def _render_clip(img_path: str, output_path: str, clip_index: int) -> None:
         zoompan = (
             f"zoompan=z='if(lte(zoom,1.0),1.4,max(1.0,zoom-0.0012))'"
             f":x='iw/2-(iw/zoom/2)-{clip_index % 3 * 5}'"
-            f":y='ih/2-(ih/zoom/2)'"
-            f":d={FRAMES_PER_IMAGE}:s={VIDEO_WIDTH}x{VIDEO_HEIGHT}:fps={FPS}"
+            f":y='ih/2-(ih/zoom/2)'"            f":d={FRAMES_PER_IMAGE}:s={VIDEO_WIDTH}x{VIDEO_HEIGHT}:fps={FPS}"
         )
 
     cmd = [
-        _FFMPEG, "-y",
+        _get_ffmpeg(), "-y",
         "-loop", "1",
         "-i", img_path,
         "-t", str(SECONDS_PER_IMAGE),
@@ -226,7 +240,7 @@ def _concat_with_xfade(clip_paths: list[str], output_path: str) -> None:
     filtergraph = ";".join(filter_parts)
 
     cmd = [
-        _FFMPEG, "-y",
+        _get_ffmpeg(), "-y",
         *inputs,
         "-filter_complex", filtergraph,
         "-map", "[vout]",
@@ -242,7 +256,7 @@ def _concat_with_xfade(clip_paths: list[str], output_path: str) -> None:
 def _mix_music(video_path: str, music_path: str, output_path: str) -> None:
     """Trim/loop music to match video duration and mix into the output."""
     probe_cmd = [
-        _FFPROBE, "-v", "error",
+        _get_ffprobe(), "-v", "error",
         "-show_entries", "format=duration",
         "-of", "default=noprint_wrappers=1:nokey=1",
         video_path,
@@ -257,7 +271,7 @@ def _mix_music(video_path: str, music_path: str, output_path: str) -> None:
     duration = float(result.stdout.strip())
 
     cmd = [
-        _FFMPEG, "-y",
+        _get_ffmpeg(), "-y",
         "-i", video_path,
         "-stream_loop", "-1", "-i", music_path,
         "-map", "0:v",
